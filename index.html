@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ELEC 1520: Single Dimensional Arrays</title>
+<style>
+:root{
+  --cu-black:#020000;
+  --cu-gold:#CFB87C;
+  --cu-accessible-gold:#8D7334;
+  --cu-sand:#F1EAD8;
+  --cu-white:#FFFFFF;
+  --cu-gray:#565A5C;
+  --cu-light:#F7F7F5;
+  --cu-border:#D9D4C8;
+  --shadow:0 12px 30px rgba(2,0,0,.10);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:Arial, Helvetica, sans-serif; color:var(--cu-black);
+  background:linear-gradient(135deg,var(--cu-light) 0%,var(--cu-sand) 100%);
+  line-height:1.55;
+}
+header{
+  background:var(--cu-black); color:var(--cu-white); padding:26px 22px 30px;
+  border-bottom:6px solid var(--cu-gold);
+}
+.header-inner{max-width:1180px;margin:auto;display:flex;gap:24px;align-items:flex-end;justify-content:space-between}
+.eyebrow{letter-spacing:.09em;text-transform:uppercase;font-size:.82rem;color:var(--cu-gold);font-weight:700}
+h1{font-size:clamp(2rem,4vw,3.25rem);line-height:1.06;margin:7px 0 10px}
+.subtitle{margin:0;color:#eee;max-width:750px}
+.author{text-align:right;color:#eee;font-size:.92rem;max-width:310px}
+.author strong{color:var(--cu-gold)}
+.wrap{max-width:1180px;margin:28px auto;padding:0 18px}
+.note{
+  background:rgba(255,255,255,.8); border:1px solid var(--cu-border); padding:16px 18px;
+  border-left:6px solid var(--cu-gold); border-radius:12px; box-shadow:var(--shadow); margin-bottom:20px;
+}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 20px}
+.tab-btn{
+  border:2px solid var(--cu-black); background:var(--cu-white); color:var(--cu-black); padding:11px 15px;
+  border-radius:999px; font-weight:700; cursor:pointer; transition:.2s transform,.2s background,.2s color,.2s box-shadow;
+}
+.tab-btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(2,0,0,.10)}
+.tab-btn.active{background:var(--cu-gold);border-color:var(--cu-black)}
+.tab-panel{display:none;animation:fadeIn .35s ease}
+.tab-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{background:var(--cu-white);border:1px solid var(--cu-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+.card h2,.card h3{margin-top:0}
+.kicker{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cu-accessible-gold);font-weight:800}
+.code{background:#111;color:#f8f8f8;border-radius:14px;padding:17px;overflow:auto;font-family:Consolas,Monaco,monospace;font-size:.95rem;white-space:pre}
+.code .kw{color:#F5DFA4}.code .num{color:#B8E3EA}.code .comment{color:#9E9E9E}.code .str{color:#D9F7BE}
+.diagram{padding:18px;border-radius:16px;background:#1a1a1a;color:#fff;overflow:hidden}
+.array-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.cell{width:74px;height:74px;background:#fff;color:#111;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;border:3px solid transparent;transition:.35s}
+.cell.active{border-color:var(--cu-gold);box-shadow:0 0 0 4px rgba(207,184,124,.22);transform:translateY(-8px)}
+.index-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.index{width:74px;text-align:center;color:#ccc;font-family:Consolas,monospace;font-size:.85rem}
+.arrow{display:flex;align-items:center;justify-content:center;min-height:30px;color:var(--cu-gold);font-weight:800}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:15px}
+button.action{background:var(--cu-black);color:#fff;border:2px solid var(--cu-black);padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+button.action.secondary{background:#fff;color:var(--cu-black);border-color:var(--cu-border)}
+button.action:hover{filter:brightness(1.08)}
+.status{font-family:Consolas,monospace;background:#f3f3f3;padding:10px 12px;border-radius:10px;flex:1;min-width:220px}
+.concept-list{display:grid;gap:12px}
+.concept{padding:14px;border-radius:12px;background:#fbfaf7;border:1px solid var(--cu-border)}
+.concept strong{display:block;margin-bottom:4px}
+.callout{background:var(--cu-black);color:#fff;border-radius:16px;padding:18px;border-left:7px solid var(--cu-gold)}
+.callout strong{color:var(--cu-gold)}
+.columns{columns:2;column-gap:28px}.columns p{break-inside:avoid}
+.quiz{background:linear-gradient(145deg,#fff,#faf7ef)}
+.option{display:block;margin:9px 0;padding:11px 12px;border:1px solid var(--cu-border);border-radius:10px;cursor:pointer;background:#fff}
+.option:hover{border-color:var(--cu-accessible-gold)}
+.option.correct{border-color:#35633b;background:#ecf7ee}.option.wrong{border-color:#8d3b35;background:#fff0ee}
+.feedback{margin-top:10px;font-weight:700;min-height:28px}
+footer{margin-top:30px;background:var(--cu-black);color:#eee;border-top:6px solid var(--cu-gold);padding:20px}
+footer .wrap{margin:0 auto}
+.small{font-size:.88rem;color:#666}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--cu-sand);font-size:.8rem;font-weight:700;margin-right:5px}
+@media(max-width:800px){.header-inner{align-items:flex-start;flex-direction:column}.author{text-align:left}.grid{grid-template-columns:1fr}.columns{columns:1}.cell,.index{width:58px}.cell{height:58px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="eyebrow">ELEC 1520: Programming for Electrical Engineers</div>
+      <h1>Single Dimensional Arrays</h1>
+      <p class="subtitle">A visual, interactive lecture page for understanding what arrays are, how to write them in C, and why programmers use them.</p>
+    </div>
+    <div class="author"><strong>Author</strong><br>Jatin Desai, Senior Instructor<br>Dept. of Electrical Engineering</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="note"><strong>Lecture idea:</strong> Think of an array as a row of labeled storage boxes. Each box stores one value of the same data type, and the index tells the program which box to use.</div>
+
+  <nav class="tabs" role="tablist" aria-label="Single Dimensional Arrays topics">
+    <button class="tab-btn active" role="tab" aria-selected="true" data-tab="overview">1. What is an Array?</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="syntax">2. C Syntax</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="animation">3. Animated Example</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="why">4. Why Use Arrays?</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="practice">5. Practice</button>
+  </nav>
+
+  <section id="overview" class="tab-panel active" role="tabpanel">
+    <div class="grid">
+      <article class="card">
+        <div class="kicker">Core concept</div>
+        <h2>One name, many values</h2>
+        <p>Suppose an electrical engineering program needs five voltage samples:</p>
+        <div class="array-row" aria-label="Example array values">
+          <div class="cell">3.3</div><div class="cell">3.1</div><div class="cell">3.4</div><div class="cell">3.2</div><div class="cell">3.5</div>
+        </div>
+        <p class="small">All five values can be grouped under one array name, such as <code>voltage</code>.</p>
+      </article>
+      <article class="card">
+        <div class="kicker">Indexes</div>
+        <h2>Counting starts at 0</h2>
+        <p>In C, the first element is index <strong>0</strong>. For an array of 5 elements, the valid indexes are 0 through 4.</p>
+        <div class="diagram">
+          <div class="array-row"><div class="cell active">3.3</div><div class="cell">3.1</div><div class="cell">3.4</div><div class="cell">3.2</div><div class="cell">3.5</div></div>
+          <div class="index-row"><div class="index">[0]</div><div class="index">[1]</div><div class="index">[2]</div><div class="index">[3]</div><div class="index">[4]</div></div>
+          <div class="arrow">↑ voltage[0] is the first element</div>
+        </div>
+      </article>
+    </div>
+    <div class="card" style="margin-top:20px">
+      <div class="kicker">Mental model</div>
+      <h2>Array = same type + fixed number of elements + one name</h2>
+      <div class="concept-list">
+        <div class="concept"><strong>Same type</strong>Every element is the declared type, such as <code>int</code>, <code>float</code>, or <code>double</code>.</div>
+        <div class="concept"><strong>Fixed size</strong>The size in a normal C array determines how many elements can be stored.</div>
+        <div class="concept"><strong>Indexed access</strong>Use square brackets: <code>array[index]</code>.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="syntax" class="tab-panel" role="tabpanel">
+    <div class="grid">
+      <article class="card">
+        <div class="kicker">Declaration</div>
+        <h2>Write the array type and size</h2>
+        <div class="code"><span class="kw">int</span> samples[5];</div>
+        <p>This declares an integer array named <code>samples</code> with space for 5 integers.</p>
+        <div class="callout"><strong>Pattern:</strong> <code>data_type array_name[size];</code></div>
+      </article>
+      <article class="card">
+        <div class="kicker">Initialization</div>
+        <h2>Give the elements starting values</h2>
+        <div class="code"><span class="kw">int</span> samples[5] = {10, 20, 30, 40, 50};</div>
+        <p>The values are stored in indexes <code>0</code> through <code>4</code>.</p>
+      </article>
+    </div>
+    <div class="card" style="margin-top:20px">
+      <div class="kicker">Reading & changing values</div>
+      <div class="grid">
+        <div>
+          <h3>Read an element</h3>
+          <div class="code"><span class="kw">int</span> x = samples[2];</div>
+          <p><code>x</code> becomes <strong>30</strong> because index 2 contains 30.</p>
+        </div>
+        <div>
+          <h3>Change an element</h3>
+          <div class="code">samples[2] = 99;</div>
+          <p>Only the third element changes; the array name still refers to the entire group.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="animation" class="tab-panel" role="tabpanel">
+    <div class="card">
+      <div class="kicker">Watch the index move</div>
+      <h2>Animation: accessing array elements</h2>
+      <p>The loop below visits each element in order. Notice how <code>i</code> becomes the index.</p>
+      <div class="diagram">
+        <div id="animArray" class="array-row"></div>
+        <div id="animIndexes" class="index-row"></div>
+        <div id="animArrow" class="arrow">Ready</div>
+      </div>
+      <div class="controls">
+        <button class="action" id="playBtn">▶ Play</button>
+        <button class="action secondary" id="stepBtn">Step →</button>
+        <button class="action secondary" id="resetBtn">Reset</button>
+        <div class="status" id="statusBox">i = 0&nbsp;&nbsp;&nbsp; statement: printf("%d", samples[i]);</div>
+      </div>
+      <div class="code" style="margin-top:16px"><span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; 5; i++) {
+    printf(<span class="str">"%d "</span>, samples[i]);
+}</div>
+      <p class="small">The loop condition prevents access beyond index 4. This is one reason indexes and array size must be understood carefully.</p>
+    </div>
+  </section>
+
+  <section id="why" class="tab-panel" role="tabpanel">
+    <div class="grid">
+      <article class="card">
+        <div class="kicker">Without an array</div>
+        <h2>Repeated variable names</h2>
+        <div class="code"><span class="kw">float</span> v0, v1, v2, v3, v4;</div>
+        <p>Managing many separate variables becomes awkward as the data set grows.</p>
+      </article>
+      <article class="card">
+        <div class="kicker">With an array</div>
+        <h2>One collection, easy loops</h2>
+        <div class="code"><span class="kw">float</span> v[5];
+<span class="kw">for</span> (<span class="kw">int</span> i=0; i&lt;5; i++) {
+    read_sensor(&amp;v[i]);
+}</div>
+        <p>The same pattern can process 5, 50, or 500 samples by changing the size and loop bounds appropriately.</p>
+      </article>
+    </div>
+    <div class="card" style="margin-top:20px">
+      <div class="kicker">Why programmers prefer them</div>
+      <div class="columns">
+        <p><strong>1. Organized data.</strong> Related values live together under one meaningful name.</p>
+        <p><strong>2. Repetition becomes simple.</strong> Loops naturally work with indexed collections.</p>
+        <p><strong>3. Scales to larger data sets.</strong> The same code structure can handle many measurements.</p>
+        <p><strong>4. Efficient memory layout.</strong> Elements are stored as a contiguous sequence in a normal C array.</p>
+      </div>
+    </div>
+    <div class="note"><strong>Electrical engineering example:</strong> arrays are useful for ADC samples, lookup tables, filter coefficients, sensor readings, test vectors, and waveform data.</div>
+  </section>
+
+  <section id="practice" class="tab-panel" role="tabpanel">
+    <div class="grid">
+      <article class="card quiz">
+        <div class="kicker">Check your understanding</div>
+        <h2>Question 1</h2>
+        <p>For <code>int a[6];</code>, what is the index of the last element?</p>
+        <label class="option"><input type="radio" name="q1" value="6"> 6</label>
+        <label class="option"><input type="radio" name="q1" value="5"> 5</label>
+        <label class="option"><input type="radio" name="q1" value="0"> 0</label>
+        <div id="q1feedback" class="feedback"></div>
+        <button class="action" onclick="checkQ1()">Check Answer</button>
+      </article>
+      <article class="card quiz">
+        <div class="kicker">Write the code</div>
+        <h2>Question 2</h2>
+        <p>Which line correctly declares an array of 10 <code>float</code> values?</p>
+        <label class="option"><input type="radio" name="q2" value="a"> <code>float data(10);</code></label>
+        <label class="option"><input type="radio" name="q2" value="b"> <code>float data[10];</code></label>
+        <label class="option"><input type="radio" name="q2" value="c"> <code>array float data[10];</code></label>
+        <div id="q2feedback" class="feedback"></div>
+        <button class="action" onclick="checkQ2()">Check Answer</button>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>ELEC 1520: Programming for Electrical Engineers</strong><br>
+    Single Dimensional Arrays · Jatin Desai, Senior Instructor, Dept. of Electrical Engineering
+  </div>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.tab-panel');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  panels.forEach(p => p.classList.remove('active'));
+  btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+}));
+
+const values = [10,20,30,40,50];
+let current = 0;
+let timer = null;
+function renderAnimation(message){
+  const arr = document.getElementById('animArray');
+  const idx = document.getElementById('animIndexes');
+  arr.innerHTML = values.map((v,i)=>`<div class="cell ${i===current?'active':''}">${v}</div>`).join('');
+  idx.innerHTML = values.map((_,i)=>`<div class="index">[${i}]</div>`).join('');
+  document.getElementById('animArrow').textContent = message || `↑ samples[${current}] = ${values[current]}`;
+  document.getElementById('statusBox').textContent = `i = ${current}    statement: printf("%d", samples[i]);    value = ${values[current]}`;
+}
+function step(){
+  renderAnimation();
+  current = (current + 1) % values.length;
+}
+function start(){
+  if(timer) return;
+  timer=setInterval(()=>{ step(); },900);
+  document.getElementById('playBtn').textContent='⏸ Pause';
+}
+function pause(){
+  clearInterval(timer); timer=null;
+  document.getElementById('playBtn').textContent='▶ Play';
+}
+document.getElementById('playBtn').addEventListener('click',()=>timer?pause():start());
+document.getElementById('stepBtn').addEventListener('click',()=>{pause();step();});
+document.getElementById('resetBtn').addEventListener('click',()=>{pause();current=0;renderAnimation('Ready — press Play or Step to walk through the array.');});
+renderAnimation('Ready — press Play or Step to walk through the array.');
+
+function checkQ1(){
+  const selected=document.querySelector('input[name="q1"]:checked');
+  const el=document.getElementById('q1feedback');
+  if(!selected){el.textContent='Select an answer first.';el.style.color='var(--cu-black)';return;}
+  if(selected.value==='5'){el.textContent='Correct. Six elements use indexes 0 through 5.';el.style.color='#35633b'}
+  else{el.textContent='Not quite. Remember: the first index is 0.';el.style.color='#8d3b35'}
+}
+function checkQ2(){
+  const selected=document.querySelector('input[name="q2"]:checked');
+  const el=document.getElementById('q2feedback');
+  if(!selected){el.textContent='Select an answer first.';el.style.color='var(--cu-black)';return;}
+  if(selected.value==='b'){el.textContent='Correct. The syntax is data_type name[size].';el.style.color='#35633b'}
+  else{el.textContent='Not quite. C arrays use square brackets for the size.';el.style.color='#8d3b35'}
+}
+</script>
+</body>
+</html>
